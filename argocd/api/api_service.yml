@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: twitch-sub-api
+  name: cannabis-api
   namespace: default
 spec:
   selector:
-    app: twitch-sub-api
+    app: cannabis-api
   ports:
-    - name: twitch-sub-api
+    - name: cannabis-api
       port: 8000
       targetPort: 8000
