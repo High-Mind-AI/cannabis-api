@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cannabis-api
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: cannabis-api
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: cannabis-api
+    spec:
+      containers:
+        - name: cannabis-api
+          image: devopswithbrian/cannabis-api:0.1.1
+          env:
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: cannabis-api-prd
+                  key: DB_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: cannabis-api-prd
+                  key: DB_PASSWORD
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: cannabis-api-prd
+                  key: DATABASE_URL
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: cannabis-api-prd
+                  key: SECRET_KEY
+            - name: ADMIN_API_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: cannabis-api-prd
+                  key: ADMIN_API_USERNAME
+            - name: ADMIN_API_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: cannabis-api-prd
+                  key: ADMIN_API_PASSWORD
+            - name: TWITCH_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: cannabis-api-prd
+                  key: TWITCH_CLIENT_ID
+            - name: TWITCH_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: cannabis-api-prd
+                  key: TWITCH_CLIENT_SECRET
+            - name: TWITCH_WEBHOOK_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: cannabis-api-prd
+                  key: TWITCH_WEBHOOK_SECRET
+            - name: TWITCH_BROADCASTER_ID
+              valueFrom:
+                secretKeyRef:
+                  name: cannabis-api-prd
+                  key: TWITCH_BROADCASTER_ID
+            - name: DB_NAME
+              value: cannabis-api
+            - name: DB_HOST
+              value: cannabis-api-db
+          ports:
+            - containerPort: 8000
+              name: cannabis-api-api

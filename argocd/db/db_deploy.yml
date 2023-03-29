@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cannabis-api-db
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: cannabis-api-db
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: cannabis-api-db
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:13
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: cannabis-api-prd
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: cannabis-api-prd
+                  key: POSTGRES_PASSWORD
+            - name: POSTGRES_DB
+              value: cannabis-api
+          ports:
+            - containerPort: 5432
+              name: postgresql
+          volumeMounts:
+            - name: postgres-data
+              mountPath: /var/lib/postgresql
+      volumes:
+        - name: postgres-data
+          persistentVolumeClaim:
+            claimName: cannabis-api-db-postgres-pvc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: cannabis-api-db-postgres-pvc
+  namespace: default
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 40Gi

@@ -1,0 +1,37 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: cannabis-api-alembic-migrate
+  namespace: default
+spec:
+  template:
+    metadata:
+      name: cannabis-api-alembic-migrate
+    spec:
+      containers:
+        - name: alembic
+          image: devopswithbrian/cannabis-api-db-migration:0.1.1
+          env:
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: cannabis-api-prd
+                  key: DB_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: cannabis-api-prd
+                  key: DB_PASSWORD
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: cannabis-api-prd
+                  key: DATABASE_URL
+            - name: DB_NAME
+              value: cannabis-api
+            - name: DB_HOST
+              value: cannabis-api-db
+            - name: ALEMBIC_CONFIG
+              value: /usr/src/app/alembic.ini
+          imagePullPolicy: Always
+      restartPolicy: Never
