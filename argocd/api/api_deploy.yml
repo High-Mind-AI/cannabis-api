@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: cannabis-api
-          image: devopswithbrian/cannabis-api:0.1.1
+          image: devopswithbrian/cannabis-api:0.2.0
           env:
             - name: DB_USER
               valueFrom:
@@ -47,26 +47,6 @@ spec:
                 secretKeyRef:
                   name: cannabis-api-prd
                   key: ADMIN_API_PASSWORD
-            - name: TWITCH_CLIENT_ID
-              valueFrom:
-                secretKeyRef:
-                  name: cannabis-api-prd
-                  key: TWITCH_CLIENT_ID
-            - name: TWITCH_CLIENT_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: cannabis-api-prd
-                  key: TWITCH_CLIENT_SECRET
-            - name: TWITCH_WEBHOOK_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: cannabis-api-prd
-                  key: TWITCH_WEBHOOK_SECRET
-            - name: TWITCH_BROADCASTER_ID
-              valueFrom:
-                secretKeyRef:
-                  name: cannabis-api-prd
-                  key: TWITCH_BROADCASTER_ID
             - name: DB_NAME
               value: cannabis-api
             - name: DB_HOST
