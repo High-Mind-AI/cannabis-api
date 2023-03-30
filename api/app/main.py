@@ -130,6 +130,17 @@ async def admin_only(current_user: str = Depends(oauth2_scheme)):
         return {"message": "Hello, admin!"}
 
 
+@app.get('/strains/{strain_name}')
+async def get_strain(strain_name: str, session: AsyncSession = Depends(get_session)):
+    async with session as s:
+        stmt = select(Strain).where(func.lower(Strain.name) == strain_name.lower())
+        result = await s.execute(stmt)
+        strain = result.scalar()
+        if strain is None:
+            raise HTTPException(status_code=404, detail=f"Strain {strain_name} not found")
+        return strain
+
+
 @app.get('/strains')
 async def get_strains(count: int = 20, session: AsyncSession = Depends(get_session)):
     async with session as s:
