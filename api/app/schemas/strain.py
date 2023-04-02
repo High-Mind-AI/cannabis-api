@@ -8,6 +8,7 @@ class StrainBase(BaseModel):
     strain_type: str
     feelings: str
     flavors: str
+    helps_with: str
 
 
 class StrainCreate(StrainBase):
@@ -25,6 +26,7 @@ class StrainInDB(StrainUpdate):
     strain_type: str
     feelings: str
     flavors: str
+    helps_with: str
 
     class Config:
         orm_mode = True
