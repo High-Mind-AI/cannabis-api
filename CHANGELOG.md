@@ -1,3 +1,9 @@
+## 0.5.0 (2023-04-02)
+
+### Feat
+
+- **db_schema**: adding in helps_with column
+
 ## 0.4.0 (2023-04-02)
 
 ### Feat
