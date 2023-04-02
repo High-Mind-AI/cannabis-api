@@ -1,3 +1,9 @@
+## 0.6.0 (2023-04-02)
+
+### Feat
+
+- **api**: new columns for thc level and dominant terpene being added
+
 ## 0.5.0 (2023-04-02)
 
 ### Feat
