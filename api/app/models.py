@@ -12,3 +12,4 @@ class Strain(Base):
     strain_type = Column(String)
     feelings = Column(String)
     flavors = Column(String)
+    helps_with = Column(String)
