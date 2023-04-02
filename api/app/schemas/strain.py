@@ -9,6 +9,8 @@ class StrainBase(BaseModel):
     feelings: str
     flavors: str
     helps_with: str
+    thc_level: str
+    dominant_terpene: str
 
 
 class StrainCreate(StrainBase):
@@ -27,6 +29,8 @@ class StrainInDB(StrainUpdate):
     feelings: str
     flavors: str
     helps_with: str
+    thc_level: str
+    dominant_terpene: str
 
     class Config:
         orm_mode = True
