@@ -1,3 +1,9 @@
+## 0.4.0 (2023-04-02)
+
+### Feat
+
+- **new_db_columns**: added in feelings and flavors for db columns/models to be used in api
+
 ## 0.3.0 (2023-03-30)
 
 ### Feat
