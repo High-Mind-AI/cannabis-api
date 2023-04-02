@@ -13,3 +13,5 @@ class Strain(Base):
     feelings = Column(String)
     flavors = Column(String)
     helps_with = Column(String)
+    thc_level = Column(String)
+    dominant_terpene = Column(String)
