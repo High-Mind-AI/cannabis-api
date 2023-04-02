@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: cannabis-api
-          image: devopswithbrian/cannabis-api:0.3.0
+          image: devopswithbrian/cannabis-api:0.4.0
           env:
             - name: DB_USER
               valueFrom:
