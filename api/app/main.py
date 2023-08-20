@@ -112,7 +112,7 @@ def authenticate_user(username: str, password: str):
 
 
 # Login endpoint
-@app.post("/login")
+@app.post("/login", tags=["Auth"])
 async def login(form_data: OAuth2PasswordRequestForm = Depends()):
     return authenticate_user(form_data.username, form_data.password)
 
@@ -133,7 +133,7 @@ async def admin_only(current_user: str = Depends(oauth2_scheme)):
         return {"message": "Hello, admin!"}
 
 
-@app.get("/strains/{strain_name}")
+@app.get("/strains/{strain_name}", tags=["Strains"])
 async def get_strain(strain_name: str, session: AsyncSession = Depends(get_session)):
     async with session as s:
         stmt = select(Strain).where(func.lower(Strain.name) == strain_name.lower())
@@ -146,7 +146,7 @@ async def get_strain(strain_name: str, session: AsyncSession = Depends(get_sessi
         return strain
 
 
-@app.get("/strains")
+@app.get("/strains", tags=["Strains"])
 async def get_strains(count: int = 20, session: AsyncSession = Depends(get_session)):
     async with session as s:
         stmt = select(Strain).order_by(Strain.id).limit(count)
@@ -155,7 +155,7 @@ async def get_strains(count: int = 20, session: AsyncSession = Depends(get_sessi
         return strains
 
 
-@app.post("/strains", response_model=List[StrainInDB])
+@app.post("/strains", response_model=List[StrainInDB], tags=["Strains"])
 async def create_strains(
     strains: List[StrainCreate],
     session: AsyncSession = Depends(get_session),
@@ -202,7 +202,7 @@ async def create_strains(
 
 
 # Update an existing Strain
-@app.put("/strains/{strain_id}", response_model=StrainInDB)
+@app.put("/strains/{strain_id}", response_model=StrainInDB, tags=["Strains"])
 async def update_strain(
     strain_id: int,
     strain: StrainUpdate,
@@ -224,7 +224,7 @@ async def update_strain(
 
 
 # Delete an existing Strain
-@app.delete("/strains/{strain_id}", response_model=dict)
+@app.delete("/strains/{strain_id}", response_model=dict, tags=["Strains"])
 async def delete_strain(
     strain_id: int,
     session: AsyncSession = Depends(get_session),
@@ -240,7 +240,7 @@ async def delete_strain(
 
 
 # Get All Feelings
-@app.get("/feelings", response_model=List[FeelingInDB])
+@app.get("/feelings", response_model=List[FeelingInDB], tags=["Feelings"])
 async def get_all_feelings(session: AsyncSession = Depends(get_session)):
     async with session as s:
         stmt = select(Feeling).order_by(Feeling.id)
@@ -250,7 +250,7 @@ async def get_all_feelings(session: AsyncSession = Depends(get_session)):
 
 
 # Feelings Create
-@app.post("/feelings", response_model=FeelingInDB)
+@app.post("/feelings", response_model=FeelingInDB, tags=["Feelings"])
 async def create_feeling(
     feeling: FeelingCreate,
     session: AsyncSession = Depends(get_session),
@@ -269,7 +269,7 @@ async def create_feeling(
 
 
 # Feelings Delete
-@app.delete("/feelings/{feeling_id}", response_model=dict)
+@app.delete("/feelings/{feeling_id}", response_model=dict, tags=["Feelings"])
 async def delete_feeling(
     feeling_id: int,
     session: AsyncSession = Depends(get_session),
