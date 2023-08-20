@@ -1,3 +1,9 @@
+## 0.6.1 (2023-08-20)
+
+### Fix
+
+- **feelings**: adding in feelings as relational
+
 ## 0.6.0 (2023-04-02)
 
 ### Feat
