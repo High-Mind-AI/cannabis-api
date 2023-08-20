@@ -20,3 +20,14 @@ Once up you also need to run initial migrations for it to setup to the DB:
 `docker-compose exec api alembic upgrade head`
 
 Now if everything is working correctly you should be able to go to `http://localhost:8004/docs` and see the swagger API/docs for the project.
+
+# Creating New Migration
+If you are adding a new object to the schema, etc you will need to run:
+
+`docker-compose exec api alembic revision -m "add whatever to schema"`
+
+Then run the following to apply the migration:
+
+`docker-compose exec api alembic upgrade head`
+
+You can look at the [Alembic Docs](https://alembic.sqlalchemy.org/en/latest/tutorial.html) for more information.
