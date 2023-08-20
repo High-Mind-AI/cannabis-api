@@ -3,3 +3,4 @@ venv/
 .env
 .venv/
 example_strains.json
+.vscode/

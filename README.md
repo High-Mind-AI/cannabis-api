@@ -24,7 +24,7 @@ Now if everything is working correctly you should be able to go to `http://local
 # Creating New Migration
 If you are adding a new object to the schema, etc you will need to run:
 
-`docker-compose exec api alembic revision -m "add whatever to schema"`
+`docker-compose exec api alembic revision --autogenerate -m "new feature"`
 
 Then run the following to apply the migration:
 
