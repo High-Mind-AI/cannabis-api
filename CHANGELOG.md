@@ -1,3 +1,9 @@
+## 0.7.0 (2023-08-20)
+
+### Feat
+
+- **swagger-docs**: updated the swagger docs to group routes
+
 ## 0.6.1 (2023-08-20)
 
 ### Fix
