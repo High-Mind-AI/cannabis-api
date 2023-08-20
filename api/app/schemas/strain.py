@@ -1,12 +1,12 @@
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, List
+from .feeling import FeelingInDB
 
 
 class StrainBase(BaseModel):
     name: str
     description: str
     strain_type: str
-    feelings: str
     flavors: str
     helps_with: str
     thc_level: str
@@ -14,7 +14,7 @@ class StrainBase(BaseModel):
 
 
 class StrainCreate(StrainBase):
-    pass
+    feelings: List[int] = []
 
 
 class StrainUpdate(StrainCreate):
@@ -26,7 +26,7 @@ class StrainInDB(StrainUpdate):
     name: str
     description: str
     strain_type: str
-    feelings: str
+    feelings: List[FeelingInDB]
     flavors: str
     helps_with: str
     thc_level: str
