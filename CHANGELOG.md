@@ -1,3 +1,9 @@
+## 0.10.1 (2023-08-21)
+
+### Refactor
+
+- **models**: refactored the models to be in their own dir
+
 ## 0.10.0 (2023-08-21)
 
 ### Feat
