@@ -5,7 +5,7 @@ from sqlalchemy import select, func
 from sqlalchemy.orm import subqueryload
 from typing import List, Optional
 from ..db import get_session
-from ..models import Strain, Feeling, Flavor, HelpsWith
+from ..models import Feeling, Flavor, HelpsWith, Strain
 from ..schemas.strain import StrainCreate, StrainUpdate, StrainInDB
 from ..auth_dependencies import get_admin_user
 

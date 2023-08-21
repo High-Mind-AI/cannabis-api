@@ -1,38 +1,7 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
-
-Base = declarative_base()
-
-
-class Feeling(Base):
-    __tablename__ = "feelings"
-
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, unique=True, index=True)
-
-    # This relationship will give us feeling.strain_associations to access all associated strain-feeling records
-    strain_associations = relationship("StrainFeeling", backref="feeling")
-
-
-class Flavor(Base):
-    __tablename__ = "flavors"
-
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, unique=True, index=True)
-
-    # This relationship will give us flavor.strain_associations to access all associated strain-flavor records
-    strain_associations = relationship("StrainFlavor", backref="flavor")
-
-
-class HelpsWith(Base):
-    __tablename__ = "helps_with"
-
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, unique=True, index=True)
-
-    # This relationship will give us helps_with.strain_associations to access all associated strain-helps_with records
-    strain_associations = relationship("StrainHelpsWith", backref="helps_with")
+from .base import Base
 
 
 class Strain(Base):
@@ -50,8 +19,9 @@ class Strain(Base):
     flavors = relationship("Flavor", secondary="strain_flavor", backref="strains")
 
     # Directly point to HelpsWith using StrainHelpsWith as the association table
-    helps_with = relationship("HelpsWith", secondary="strain_helps_with", backref="strains")
-
+    helps_with = relationship(
+        "HelpsWith", secondary="strain_helps_with", backref="strains"
+    )
 
     thc_level = Column(String)
     dominant_terpene = Column(String)
