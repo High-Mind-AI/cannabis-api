@@ -1,3 +1,10 @@
+## 0.8.1 (2023-08-21)
+
+### Fix
+
+- **.cz.toml**: fixing the version update in toml file
+- **.cz.toml**: updating the toml file to update the version in the main.py file
+
 ## 0.8.0 (2023-08-21)
 
 ### Feat
