@@ -36,7 +36,7 @@ async def get_strains(count: int = 20, session: AsyncSession = Depends(get_sessi
     async with session as s:
         stmt = (
             select(Strain)
-            .options(subqueryload(Strain.feelings), subqueryload(Strain.flavors))
+            .options(subqueryload(Strain.feelings), subqueryload(Strain.flavors), subqueryload(Strain.helps_with))
             .order_by(Strain.id)
             .limit(count)
         )
@@ -97,7 +97,7 @@ async def create_strains(
                     )
                 helps_with_objs.append(helps_with_obj)
 
-            # Create the new strain without feelings and flavors
+            # Create the new strain without feelings, flavors, and helps_with
             new_strain = Strain(**strain.dict(exclude={"feelings", "flavors", "helps_with"}))
 
             # Set the feelings, flavors, helps_with
