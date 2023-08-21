@@ -25,6 +25,16 @@ class Flavor(Base):
     strain_associations = relationship("StrainFlavor", backref="flavor")
 
 
+class HelpsWith(Base):
+    __tablename__ = "helps_with"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, unique=True, index=True)
+
+    # This relationship will give us helps_with.strain_associations to access all associated strain-helps_with records
+    strain_associations = relationship("StrainHelpsWith", backref="helps_with")
+
+
 class Strain(Base):
     __tablename__ = "strains"
 
@@ -39,7 +49,10 @@ class Strain(Base):
     # Directly point to Flavor using StrainFlavor as the association table
     flavors = relationship("Flavor", secondary="strain_flavor", backref="strains")
 
-    helps_with = Column(String)
+    # Directly point to HelpsWith using StrainHelpsWith as the association table
+    helps_with = relationship("HelpsWith", secondary="strain_helps_with", backref="strains")
+
+
     thc_level = Column(String)
     dominant_terpene = Column(String)
 
@@ -60,5 +73,15 @@ class StrainFlavor(Base):
 
     strain_id = Column(Integer, ForeignKey("strains.id"), primary_key=True)
     flavor_id = Column(Integer, ForeignKey("flavors.id"), primary_key=True)
+
+    # Note: We don't need to explicitly define the backref relationships here, as we have already defined them using backref in the main models.
+
+
+# Association table for Strain-HelpsWith relationship
+class StrainHelpsWith(Base):
+    __tablename__ = "strain_helps_with"
+
+    strain_id = Column(Integer, ForeignKey("strains.id"), primary_key=True)
+    helps_with_id = Column(Integer, ForeignKey("helps_with.id"), primary_key=True)
 
     # Note: We don't need to explicitly define the backref relationships here, as we have already defined them using backref in the main models.

@@ -32,6 +32,13 @@ def upgrade() -> None:
         sa.Column('name', sa.String, unique=True, nullable=False)
     )
 
+    # Create the helps_with table
+    op.create_table(
+        'helps_with',
+        sa.Column('id', sa.INTEGER, primary_key=True, autoincrement=True),
+        sa.Column('name', sa.String, unique=True, nullable=False)
+    )
+
     # Adjust the strains table to fit the new model
     op.create_table(
         'strains',
@@ -39,7 +46,6 @@ def upgrade() -> None:
         sa.Column('name', sa.String, nullable=False),
         sa.Column('description', sa.String, nullable=False),
         sa.Column('strain_type', sa.String, nullable=False),
-        sa.Column('helps_with', sa.String, nullable=True),
         sa.Column('thc_level', sa.String, nullable=True),
         sa.Column('dominant_terpene', sa.String, nullable=True)
     )
@@ -58,10 +64,20 @@ def upgrade() -> None:
         sa.Column('flavor_id', sa.INTEGER, sa.ForeignKey('flavors.id'), primary_key=True)
     )
 
+    # Create the strain_helps_with association table
+    op.create_table(
+        'strain_helps_with',
+        sa.Column('strain_id', sa.INTEGER, sa.ForeignKey('strains.id'), primary_key=True),
+        sa.Column('helps_with_id', sa.INTEGER, sa.ForeignKey('helps_with.id'), primary_key=True)
+    )
+
 def downgrade() -> None:
     op.drop_table('strain_feeling')
+    op.drop_table('strain_flavor')
+    op.drop_table('strain_helps_with')
     op.drop_table('strains')
     op.drop_table('feelings')
     op.drop_table('flavors')
+    op.drop_table('helps_with')
 
 
