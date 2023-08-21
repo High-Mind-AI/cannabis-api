@@ -1,3 +1,9 @@
+## 0.8.0 (2023-08-21)
+
+### Feat
+
+- **api-routes**: refactored the api routes into their own files
+
 ## 0.7.0 (2023-08-20)
 
 ### Feat
