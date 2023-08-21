@@ -3,7 +3,8 @@ name = "cz_conventional_commits"
 version = "0.8.0"
 tag_format = "$version"
 version_files = [
-    ".cz.toml"
+    ".cz.toml",
+    "api/main.py"
 ]
 update_changelog_on_bump = true
 
