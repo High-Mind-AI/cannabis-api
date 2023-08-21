@@ -1,3 +1,9 @@
+## 0.10.0 (2023-08-21)
+
+### Feat
+
+- **helpswith**: updated helpswith to be relational and its own table
+
 ## 0.9.0 (2023-08-21)
 
 ### Feat
