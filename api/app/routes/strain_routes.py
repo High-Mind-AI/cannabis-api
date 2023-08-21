@@ -2,9 +2,10 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
+from sqlalchemy.orm import subqueryload
 from typing import List, Optional
 from ..db import get_session
-from ..models import Strain, Feeling
+from ..models import Strain, Feeling, Flavor
 from ..schemas.strain import StrainCreate, StrainUpdate, StrainInDB
 from ..auth_dependencies import get_admin_user
 
@@ -12,10 +13,15 @@ router = APIRouter()
 
 # ... all the strain-related routes ...
 
+
 @router.get("/strains/{strain_name}", tags=["Strains"])
 async def get_strain(strain_name: str, session: AsyncSession = Depends(get_session)):
     async with session as s:
-        stmt = select(Strain).where(func.lower(Strain.name) == strain_name.lower())
+        stmt = (
+            select(Strain)
+            .where(func.lower(Strain.name) == strain_name.lower())
+            .options(subqueryload(Strain.feelings), subqueryload(Strain.flavors))
+        )
         result = await s.execute(stmt)
         strain = result.scalar()
         if strain is None:
@@ -28,7 +34,12 @@ async def get_strain(strain_name: str, session: AsyncSession = Depends(get_sessi
 @router.get("/strains", tags=["Strains"])
 async def get_strains(count: int = 20, session: AsyncSession = Depends(get_session)):
     async with session as s:
-        stmt = select(Strain).order_by(Strain.id).limit(count)
+        stmt = (
+            select(Strain)
+            .options(subqueryload(Strain.feelings), subqueryload(Strain.flavors))
+            .order_by(Strain.id)
+            .limit(count)
+        )
         result = await s.execute(stmt)
         strains = result.scalars().all()
         return strains
@@ -60,11 +71,25 @@ async def create_strains(
                     )
                 feeling_objs.append(feeling_obj)
 
-            # Create the new strain without feelings
-            new_strain = Strain(**strain.dict(exclude={"feelings"}))
+            # Verify that all flavors exist
+            flavor_objs = []
+            for flavor_id in strain.flavors:
+                stmt = select(Flavor).filter_by(id=flavor_id)
+                result = await s.execute(stmt)
+                flavor_obj = result.scalars().first()
+                if not flavor_obj:
+                    raise HTTPException(
+                        status_code=400,
+                        detail=f"Flavor with ID {flavor_id} does not exist",
+                    )
+                flavor_objs.append(flavor_obj)
 
-            # Set the feelings
+            # Create the new strain without feelings and flavors
+            new_strain = Strain(**strain.dict(exclude={"feelings", "flavors"}))
+
+            # Set the feelings and flavors
             new_strain.feelings = feeling_objs
+            new_strain.flavors = flavor_objs
 
             s.add(new_strain)
             await s.flush()  # Ensure new_strain gets an ID
@@ -76,7 +101,6 @@ async def create_strains(
             await s.rollback()
             raise HTTPException(status_code=400, detail="Strain already exists")
 
-    # Since the strains are committed, you can directly return the created_strains list
     return created_strains
 
 

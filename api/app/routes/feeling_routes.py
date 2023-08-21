@@ -12,6 +12,7 @@ router = APIRouter()
 
 # [Your feeling-related routes here]
 
+
 # Get All Feelings
 @router.get("/feelings", response_model=List[FeelingInDB], tags=["Feelings"])
 async def get_all_feelings(session: AsyncSession = Depends(get_session)):
