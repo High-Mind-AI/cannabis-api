@@ -1,3 +1,9 @@
+## 0.10.2 (2023-08-21)
+
+### Refactor
+
+- **models**: fixing one issue in the refactor
+
 ## 0.10.1 (2023-08-21)
 
 ### Refactor
