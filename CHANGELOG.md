@@ -1,3 +1,9 @@
+## 0.9.0 (2023-08-21)
+
+### Feat
+
+- **flavors**: updated flavors to be the relational setup
+
 ## 0.8.1 (2023-08-21)
 
 ### Fix
