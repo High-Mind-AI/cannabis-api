@@ -4,7 +4,7 @@ version = "0.8.1"
 tag_format = "$version"
 version_files = [
     ".cz.toml",
-    "api/app/main.py:version"
+    "api/app/main.py:api_version"
 ]
 update_changelog_on_bump = true
 

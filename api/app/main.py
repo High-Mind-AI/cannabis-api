@@ -15,11 +15,11 @@ from .auth_dependencies import (
     ADMIN_USERNAME,
 )
 
-version = "0.8.1"
+api_version = "0.8.1"
 
 app = FastAPI(
     title="Cannabis API",
-    version=version,
+    version=api_version,
     description="An API of cannabis strains and descriptions.",
     openapi_tags=[],
     components={
