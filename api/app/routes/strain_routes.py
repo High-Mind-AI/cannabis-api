@@ -5,7 +5,7 @@ from sqlalchemy import select, func
 from sqlalchemy.orm import subqueryload
 from typing import List, Optional
 from ..db import get_session
-from ..models import Strain, Feeling, Flavor
+from ..models import Strain, Feeling, Flavor, HelpsWith
 from ..schemas.strain import StrainCreate, StrainUpdate, StrainInDB
 from ..auth_dependencies import get_admin_user
 
@@ -84,12 +84,26 @@ async def create_strains(
                     )
                 flavor_objs.append(flavor_obj)
 
-            # Create the new strain without feelings and flavors
-            new_strain = Strain(**strain.dict(exclude={"feelings", "flavors"}))
+            # Verify that all helps_with exist
+            helps_with_objs = []
+            for helps_with_id in strain.helps_with:
+                stmt = select(HelpsWith).filter_by(id=helps_with_id)
+                result = await s.execute(stmt)
+                helps_with_obj = result.scalars().first()
+                if not helps_with_obj:
+                    raise HTTPException(
+                        status_code=400,
+                        detail=f"HelpsWith with ID {helps_with_id} does not exist",
+                    )
+                helps_with_objs.append(helps_with_obj)
 
-            # Set the feelings and flavors
+            # Create the new strain without feelings and flavors
+            new_strain = Strain(**strain.dict(exclude={"feelings", "flavors", "helps_with"}))
+
+            # Set the feelings, flavors, helps_with
             new_strain.feelings = feeling_objs
             new_strain.flavors = flavor_objs
+            new_strain.helps_with = helps_with_objs
 
             s.add(new_strain)
             await s.flush()  # Ensure new_strain gets an ID

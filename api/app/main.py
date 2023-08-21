@@ -6,7 +6,7 @@ from jose import JWTError, jwt
 
 
 from .db import init_db
-from .routes import strain_routes, feeling_routes, flavor_routes
+from .routes import strain_routes, feeling_routes, flavor_routes, helps_with_routes
 from .auth_dependencies import (
     authenticate_user,
     SECRET_KEY,
@@ -76,3 +76,4 @@ async def admin_only(current_user: str = Depends(oauth2_scheme)):
 app.include_router(strain_routes.router, prefix="/strains", tags=["Strains"])
 app.include_router(feeling_routes.router, prefix="/feelings", tags=["Feelings"])
 app.include_router(flavor_routes.router, prefix="/flavors", tags=["Flavors"])
+app.include_router(helps_with_routes.router, prefix="/helpswith", tags=["HelpsWith"])
