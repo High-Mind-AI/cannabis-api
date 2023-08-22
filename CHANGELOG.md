@@ -1,3 +1,9 @@
+## 0.11.0 (2023-08-22)
+
+### Feat
+
+- **strain_types**: refactor strain types to be its own table with relations
+
 ## 0.10.2 (2023-08-21)
 
 ### Refactor
