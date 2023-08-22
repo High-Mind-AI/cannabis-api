@@ -10,7 +10,10 @@ class Strain(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String)
     description = Column(String)
-    strain_type = Column(String)
+
+    # Directly point to Type (the strain's type, e.g., Indica, Hybrid, Sativa)
+    strain_type_id = Column(Integer, ForeignKey("types.id"))
+    strain_type = relationship("Type")
 
     # Directly point to Feeling using StrainFeeling as the association table
     feelings = relationship("Feeling", secondary="strain_feeling", backref="strains")
