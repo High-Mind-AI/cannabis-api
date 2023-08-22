@@ -5,7 +5,7 @@ from sqlalchemy import select, func
 from sqlalchemy.orm import subqueryload
 from typing import List, Optional
 from ..db import get_session
-from ..models import Feeling, Flavor, HelpsWith, Strain
+from ..models import Feeling, Flavor, HelpsWith, Strain, Type
 from ..schemas.strain import StrainCreate, StrainUpdate, StrainInDB
 from ..auth_dependencies import get_admin_user
 
@@ -20,7 +20,7 @@ async def get_strain(strain_name: str, session: AsyncSession = Depends(get_sessi
         stmt = (
             select(Strain)
             .where(func.lower(Strain.name) == strain_name.lower())
-            .options(subqueryload(Strain.feelings), subqueryload(Strain.flavors))
+            .options(subqueryload(Strain.feelings), subqueryload(Strain.flavors), subqueryload(Strain.helps_with), subqueryload(Strain.type))
         )
         result = await s.execute(stmt)
         strain = result.scalar()
@@ -36,7 +36,7 @@ async def get_strains(count: int = 20, session: AsyncSession = Depends(get_sessi
     async with session as s:
         stmt = (
             select(Strain)
-            .options(subqueryload(Strain.feelings), subqueryload(Strain.flavors), subqueryload(Strain.helps_with))
+            .options(subqueryload(Strain.feelings), subqueryload(Strain.flavors), subqueryload(Strain.helps_with), subqueryload(Strain.strain_type))
             .order_by(Strain.id)
             .limit(count)
         )
@@ -97,13 +97,32 @@ async def create_strains(
                     )
                 helps_with_objs.append(helps_with_obj)
 
+
+            type_obj = None
+            if "strain_type_id" in strain.dict():
+                strain_type_id = strain.strain_type_id
+                stmt = select(Type).filter_by(id=strain_type_id)
+                result = await s.execute(stmt)
+                type_obj = result.scalars().first()
+                if not type_obj:
+                    raise HTTPException(
+                        status_code=400,
+                        detail=f"Type with ID {strain_type_id} does not exist",
+                    )
+            else:
+                raise HTTPException(
+                    status_code=400,
+                    detail="strain_type_id is required",
+                )    
+
             # Create the new strain without feelings, flavors, and helps_with
-            new_strain = Strain(**strain.dict(exclude={"feelings", "flavors", "helps_with"}))
+            new_strain = Strain(**strain.dict(exclude={"feelings", "flavors", "helps_with", "strain_type_id"}))
 
             # Set the feelings, flavors, helps_with
             new_strain.feelings = feeling_objs
             new_strain.flavors = flavor_objs
             new_strain.helps_with = helps_with_objs
+            new_strain.strain_type = type_obj
 
             s.add(new_strain)
             await s.flush()  # Ensure new_strain gets an ID
