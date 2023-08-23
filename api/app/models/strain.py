@@ -27,7 +27,9 @@ class Strain(Base):
     )
 
     thc_level = Column(String)
-    dominant_terpene = Column(String)
+    
+    dominant_terpene_id = Column(Integer, ForeignKey("terpenes.id"), nullable=True)
+    dominant_terpene = relationship("Terpene")
 
 
 # Association table for Strain-Feeling relationship
