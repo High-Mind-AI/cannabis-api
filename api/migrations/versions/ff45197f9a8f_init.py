@@ -85,11 +85,20 @@ def upgrade() -> None:
         sa.Column('helps_with_id', sa.INTEGER, sa.ForeignKey('helps_with.id'), primary_key=True)
     )
 
+    # Add the Strain-Terpenes association table
+    op.create_table(
+        'strain_terpene',
+        sa.Column('strain_id', sa.INTEGER, sa.ForeignKey('strains.id'), primary_key=True),
+        sa.Column('terpene_id', sa.INTEGER, sa.ForeignKey('terpenes.id'), primary_key=True)
+    )
+
+
 
 def downgrade() -> None:
     op.drop_table('strain_feeling')
     op.drop_table('strain_flavor')
     op.drop_table('strain_helps_with')
+    op.drop_table('strain_terpene')
     op.drop_table('strains')
     op.drop_table('feelings')
     op.drop_table('flavors')

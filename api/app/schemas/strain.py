@@ -19,6 +19,7 @@ class StrainCreate(StrainBase):
     helps_with: List[int] = []
     strain_type_id: int
     dominant_terpene_id: Optional[int]
+    terpenes: List[int] = []
 
 
 class StrainUpdate(StrainCreate):
@@ -35,6 +36,7 @@ class StrainInDB(StrainUpdate):
     helps_with: List[HelpsWithInDB]
     thc_level: str
     dominant_terpene: Optional[TerpeneInDB]
+    terpenes: List[TerpeneInDB]
 
     class Config:
         orm_mode = True

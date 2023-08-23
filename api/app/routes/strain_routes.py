@@ -11,6 +11,19 @@ from ..auth_dependencies import get_admin_user
 
 router = APIRouter()
 
+
+async def verify_terpene_exists(terpene_id, session):
+    stmt = select(Terpene).filter_by(id=terpene_id)
+    result = await session.execute(stmt)
+    terpene_obj = result.scalars().first()
+    if not terpene_obj:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Terpene with ID {terpene_id} does not exist",
+        )
+    return terpene_obj
+
+
 # ... all the strain-related routes ...
 
 
@@ -25,6 +38,8 @@ async def get_strain(strain_name: str, session: AsyncSession = Depends(get_sessi
                 subqueryload(Strain.flavors),
                 subqueryload(Strain.helps_with),
                 subqueryload(Strain.type),
+                subqueryload(Strain.dominant_terpene),
+                subqueryload(Strain.terpenes),
             )
         )
         result = await s.execute(stmt)
@@ -47,6 +62,7 @@ async def get_strains(count: int = 20, session: AsyncSession = Depends(get_sessi
                 subqueryload(Strain.helps_with),
                 subqueryload(Strain.strain_type),
                 subqueryload(Strain.dominant_terpene),
+                subqueryload(Strain.terpenes),
             )
             .order_by(Strain.id)
             .limit(count)
@@ -108,19 +124,20 @@ async def create_strains(
                     )
                 helps_with_objs.append(helps_with_obj)
 
-            # Verify that terpene is set
-            terpene_obj = None
-            if "dominant_terpene_id" in strain.dict():
-                dominant_terpene_id = strain.dominant_terpene_id
-                stmt = select(Terpene).filter_by(id=dominant_terpene_id)
-                result = await s.execute(stmt)
-                terpene_obj = result.scalars().first()
-                if not terpene_obj:
-                    raise HTTPException(
-                        status_code=400,
-                        detail=f"Terpene with ID {dominant_terpene_id} does not exist",
-                    )
+            # Verify that dom terpene is set
+            dominant_terpene = None
+            if strain.dominant_terpene_id:
+                dominant_terpene = await verify_terpene_exists(strain.dominant_terpene_id, s)
 
+
+            # Verify that all terpenes exist
+            terpene_objs = []
+            for terpene_id in strain.terpenes:
+                terpene_obj = await verify_terpene_exists(terpene_id, s)
+                terpene_objs.append(terpene_obj)
+                
+
+            # Verify Strain Type exists
             type_obj = None
             if "strain_type_id" in strain.dict():
                 strain_type_id = strain.strain_type_id
@@ -147,6 +164,7 @@ async def create_strains(
                         "helps_with",
                         "strain_type_id",
                         "dominant_terpene",
+                        "terpenes"
                     }
                 )
             )
@@ -156,7 +174,8 @@ async def create_strains(
             new_strain.flavors = flavor_objs
             new_strain.helps_with = helps_with_objs
             new_strain.strain_type = type_obj
-            new_strain.dominant_terpene = terpene_obj
+            new_strain.dominant_terpene = dominant_terpene
+            new_strain.terpenes = terpene_objs
 
             s.add(new_strain)
             await s.flush()  # Ensure new_strain gets an ID
