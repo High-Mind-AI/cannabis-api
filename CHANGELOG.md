@@ -1,3 +1,9 @@
+## 0.12.0 (2023-08-23)
+
+### Feat
+
+- **terpenes**: refactoring dominant terpene to be relational
+
 ## 0.11.0 (2023-08-22)
 
 ### Feat

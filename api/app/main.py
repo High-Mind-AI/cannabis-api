@@ -15,7 +15,7 @@ from .auth_dependencies import (
     ADMIN_USERNAME,
 )
 
-api_version = "0.11.0"
+api_version = "0.12.0"
 
 app = FastAPI(
     title="Cannabis API",
