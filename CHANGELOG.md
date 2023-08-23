@@ -1,3 +1,9 @@
+## 0.13.0 (2023-08-23)
+
+### Feat
+
+- **terpenes**: added in terpenes as a list of objects
+
 ## 0.12.0 (2023-08-23)
 
 ### Feat
