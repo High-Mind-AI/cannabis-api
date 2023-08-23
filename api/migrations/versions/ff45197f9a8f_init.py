@@ -39,6 +39,13 @@ def upgrade() -> None:
         sa.Column('name', sa.String, unique=True, nullable=False)
     )
 
+    # Create the terpenes table
+    op.create_table(
+        'terpenes',
+        sa.Column('id', sa.INTEGER, primary_key=True, autoincrement=True),
+        sa.Column('name', sa.String, unique=True, nullable=False)
+    )
+
     # Create the strain_type table
     op.create_table(
         'types',
@@ -54,7 +61,7 @@ def upgrade() -> None:
         sa.Column('description', sa.String, nullable=False),
         sa.Column('strain_type_id', sa.INTEGER, sa.ForeignKey('types.id'), nullable=False),  # Direct foreign key to types table
         sa.Column('thc_level', sa.String, nullable=True),
-        sa.Column('dominant_terpene', sa.String, nullable=True)
+        sa.Column('dominant_terpene_id', sa.INTEGER, sa.ForeignKey('terpenes.id'), nullable=True)
     )
 
     # Create the strain_feeling association table
@@ -87,6 +94,7 @@ def downgrade() -> None:
     op.drop_table('feelings')
     op.drop_table('flavors')
     op.drop_table('helps_with')
+    op.drop_table('terpenes')
     op.drop_table('types')
 
 

@@ -5,7 +5,7 @@ from sqlalchemy import select, func
 from sqlalchemy.orm import subqueryload
 from typing import List, Optional
 from ..db import get_session
-from ..models import Feeling, Flavor, HelpsWith, Strain, Type
+from ..models import Feeling, Flavor, HelpsWith, Strain, Type, Terpene
 from ..schemas.strain import StrainCreate, StrainUpdate, StrainInDB
 from ..auth_dependencies import get_admin_user
 
@@ -20,7 +20,12 @@ async def get_strain(strain_name: str, session: AsyncSession = Depends(get_sessi
         stmt = (
             select(Strain)
             .where(func.lower(Strain.name) == strain_name.lower())
-            .options(subqueryload(Strain.feelings), subqueryload(Strain.flavors), subqueryload(Strain.helps_with), subqueryload(Strain.type))
+            .options(
+                subqueryload(Strain.feelings),
+                subqueryload(Strain.flavors),
+                subqueryload(Strain.helps_with),
+                subqueryload(Strain.type),
+            )
         )
         result = await s.execute(stmt)
         strain = result.scalar()
@@ -36,7 +41,13 @@ async def get_strains(count: int = 20, session: AsyncSession = Depends(get_sessi
     async with session as s:
         stmt = (
             select(Strain)
-            .options(subqueryload(Strain.feelings), subqueryload(Strain.flavors), subqueryload(Strain.helps_with), subqueryload(Strain.strain_type))
+            .options(
+                subqueryload(Strain.feelings),
+                subqueryload(Strain.flavors),
+                subqueryload(Strain.helps_with),
+                subqueryload(Strain.strain_type),
+                subqueryload(Strain.dominant_terpene),
+            )
             .order_by(Strain.id)
             .limit(count)
         )
@@ -97,6 +108,18 @@ async def create_strains(
                     )
                 helps_with_objs.append(helps_with_obj)
 
+            # Verify that terpene is set
+            terpene_obj = None
+            if "dominant_terpene_id" in strain.dict():
+                dominant_terpene_id = strain.dominant_terpene_id
+                stmt = select(Terpene).filter_by(id=dominant_terpene_id)
+                result = await s.execute(stmt)
+                terpene_obj = result.scalars().first()
+                if not terpene_obj:
+                    raise HTTPException(
+                        status_code=400,
+                        detail=f"Terpene with ID {dominant_terpene_id} does not exist",
+                    )
 
             type_obj = None
             if "strain_type_id" in strain.dict():
@@ -113,16 +136,27 @@ async def create_strains(
                 raise HTTPException(
                     status_code=400,
                     detail="strain_type_id is required",
-                )    
+                )
 
             # Create the new strain without feelings, flavors, and helps_with
-            new_strain = Strain(**strain.dict(exclude={"feelings", "flavors", "helps_with", "strain_type_id"}))
+            new_strain = Strain(
+                **strain.dict(
+                    exclude={
+                        "feelings",
+                        "flavors",
+                        "helps_with",
+                        "strain_type_id",
+                        "dominant_terpene",
+                    }
+                )
+            )
 
             # Set the feelings, flavors, helps_with
             new_strain.feelings = feeling_objs
             new_strain.flavors = flavor_objs
             new_strain.helps_with = helps_with_objs
             new_strain.strain_type = type_obj
+            new_strain.dominant_terpene = terpene_obj
 
             s.add(new_strain)
             await s.flush()  # Ensure new_strain gets an ID

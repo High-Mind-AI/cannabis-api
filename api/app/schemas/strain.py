@@ -4,13 +4,13 @@ from .feeling import FeelingInDB
 from .flavor import FlavorInDB
 from .helps_with import HelpsWithInDB
 from .type import TypeInDB
+from .terpene import TerpeneInDB
 
 
 class StrainBase(BaseModel):
     name: str
     description: str
     thc_level: str
-    dominant_terpene: str
 
 
 class StrainCreate(StrainBase):
@@ -18,6 +18,7 @@ class StrainCreate(StrainBase):
     flavors: List[int] = []
     helps_with: List[int] = []
     strain_type_id: int
+    dominant_terpene_id: Optional[int]
 
 
 class StrainUpdate(StrainCreate):
@@ -31,9 +32,9 @@ class StrainInDB(StrainUpdate):
     strain_type: TypeInDB
     feelings: List[FeelingInDB]
     flavors: List[FlavorInDB]
-    helps_with: List[HelpsWithInDB] 
+    helps_with: List[HelpsWithInDB]
     thc_level: str
-    dominant_terpene: str
+    dominant_terpene: Optional[TerpeneInDB]
 
     class Config:
         orm_mode = True

@@ -6,7 +6,7 @@ from jose import JWTError, jwt
 
 
 from .db import init_db
-from .routes import strain_routes, feeling_routes, flavor_routes, helps_with_routes, type_routes
+from .routes import strain_routes, feeling_routes, flavor_routes, helps_with_routes, type_routes, terpene_routes
 from .auth_dependencies import (
     authenticate_user,
     SECRET_KEY,
@@ -78,3 +78,4 @@ app.include_router(feeling_routes.router, tags=["Feelings"])
 app.include_router(flavor_routes.router, tags=["Flavors"])
 app.include_router(helps_with_routes.router, tags=["HelpsWith"])
 app.include_router(type_routes.router, tags=["Types"])
+app.include_router(terpene_routes.router, tags=["Terpenes"])
