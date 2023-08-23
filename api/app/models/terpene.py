@@ -9,3 +9,5 @@ class Terpene(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, unique=True, index=True)
+    dominant_in_strains = relationship("Strain", back_populates="dominant_terpene")
+    strains = relationship("Strain", secondary="strain_terpene", back_populates="terpenes")

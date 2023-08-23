@@ -27,9 +27,12 @@ class Strain(Base):
     )
 
     thc_level = Column(String)
-    
+
     dominant_terpene_id = Column(Integer, ForeignKey("terpenes.id"), nullable=True)
     dominant_terpene = relationship("Terpene")
+    terpenes = relationship(
+        "Terpene", secondary="strain_terpene", back_populates="strains"
+    )
 
 
 # Association table for Strain-Feeling relationship
@@ -60,3 +63,11 @@ class StrainHelpsWith(Base):
     helps_with_id = Column(Integer, ForeignKey("helps_with.id"), primary_key=True)
 
     # Note: We don't need to explicitly define the backref relationships here, as we have already defined them using backref in the main models.
+
+
+# Association table for Strain-Terpene relationship
+class StrainTerpene(Base):
+    __tablename__ = "strain_terpene"
+
+    strain_id = Column(Integer, ForeignKey("strains.id"), primary_key=True)
+    terpene_id = Column(Integer, ForeignKey("terpenes.id"), primary_key=True)
